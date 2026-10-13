@@ -1,13 +1,13 @@
-import{
+import {
     getProducts,
     getProduct,
     getCategories,
     getProductsByCategory
 }
 
-from "../../services/api/fakeStoreAPI";
+from '../../services/api/dummyJSON_API';
 
-export{
+export {
     getProducts,
     getProduct,
     getCategories,

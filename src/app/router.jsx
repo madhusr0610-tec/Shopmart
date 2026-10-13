@@ -1,9 +1,11 @@
-import HomePage from "../pages/HomePage/HomePage"
+import HomePage from "../pages/HomePage/HomePage";
 import ContactPage from "../pages/ContactPage/ContactPage";
 import AboutPage from "../pages/AboutPage/AboutPage";
 
 // Products
 import ProductsPage from "../pages/products/ProductsPage/ProductsPage";
+
+import NotFound from "../pages/NotFound/NotFound";
 
 import PageLayout from "../components/layout/PageLayout/PageLayout";
 
@@ -16,13 +18,16 @@ export const router = createBrowserRouter([
         children: [
             { index: true, element: <HomePage /> },
             { path: "contact", element: <ContactPage /> },
-            { path: "about", element: <AboutPage /> },
+            { path: "about", element: <AboutPage /> },    
             {
-                path:"products",
-                children: [
-                    { index: true, element: <ProductsPage/>},
+                path: "products",
+                children: [ 
+                    { index: true, element: <ProductsPage />},
+                    
                 ]
-            }
+            }       
         ]
     },
+
+    { path: "*", element: <NotFound /> }
 ]);
