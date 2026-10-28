@@ -1,7 +1,10 @@
-import "./ProductCard.css";
+import styles from "./ProductCard.module.css";
+import { Link } from "react-router-dom";
+import { useCart } from "../../../cart/hooks/useCart";
 
 const ProductCard = ({ product }) => {
   const {
+    id,
     title,
     description,
     brand,
@@ -11,6 +14,7 @@ const ProductCard = ({ product }) => {
     thumbnail,
     reviews = [],
   } = product;
+  const { addToCart } = useCart();
 
   const averageRating =
     reviews.length > 0
@@ -23,32 +27,42 @@ const ProductCard = ({ product }) => {
   const hasHalfStar = averageRating - fullStars >= 0.5;
 
   return (
-    <div className="product-card">
-      <div className="product-image-wrapper">
+    <div className={styles.productCard}>
+      <div className={styles.productImageWrapper}>
         <img
           src={thumbnail}
           alt={title}
-          className="product-image"
+          className={styles.productImage}
         />
       </div>
 
-      <div className="product-card-body">
-        <span className="product-brand">
+      <div className={styles.productCardBody}>
+        <span className={styles.productBrand}>
           {brand || "Featured"}
         </span>
 
-        <h5 className="product-title">{title}</h5>
+        <Link
+          to={`/products/${id}`}
+          className={styles.noDecoration}
+        >
+          <h5 className={styles.productTitle}>
+            {title}
+          </h5>
+        </Link>
 
-        <p className="product-description">
+        <p className={styles.productDescription}>
           {description}
         </p>
 
-        <div className="product-rating">
-          <div className="stars">
+        <div className={styles.productRating}>
+          <div className={styles.stars}>
             {[...Array(5)].map((_, index) => {
               if (index < fullStars) {
                 return (
-                  <span key={index} className="star filled">
+                  <span
+                    key={index}
+                    className={`${styles.star} ${styles.filled}`}
+                  >
                     ★
                   </span>
                 );
@@ -56,45 +70,53 @@ const ProductCard = ({ product }) => {
 
               if (index === fullStars && hasHalfStar) {
                 return (
-                  <span key={index} className="star half">
+                  <span
+                    key={index}
+                    className={`${styles.star} ${styles.half}`}
+                  >
                     ★
                   </span>
                 );
               }
 
               return (
-                <span key={index} className="star">
+                <span
+                  key={index}
+                  className={styles.star}
+                >
                   ★
                 </span>
               );
             })}
           </div>
 
-          <span className="rating-number">
+          <span className={styles.ratingNumber}>
             {roundedRating}
           </span>
 
-          <span className="review-count">
+          <span className={styles.reviewCount}>
             ({reviews.length})
           </span>
         </div>
 
-        <div className="product-price">
-          <span className="price">${price}</span>
+        <div className={styles.productPrice}>
+          <span className={styles.price}>
+            ${price}
+          </span>
 
-          <span className="discount">
+          <span className={styles.discount}>
             -{discountPercentage}%
           </span>
         </div>
 
         <div
-          className={
+          className={`${styles.productStock} ${
             stock > 0
-              ? "product-stock available"
-              : "product-stock unavailable"
-          }
+              ? styles.available
+              : styles.unavailable
+          }`}
         >
-          <span className="stock-dot"></span>
+          <span className={styles.stockDot}></span>
 
           {stock > 0
             ? `${stock} units available`
@@ -102,15 +124,20 @@ const ProductCard = ({ product }) => {
         </div>
 
         <button
-          className="product-button"
+          className={styles.productButton}
           disabled={stock <= 0}
+          onClick={() => {
+            addToCart(product);
+          }}
         >
           <span>
             {stock > 0 ? "Add to Cart" : "Unavailable"}
           </span>
 
           {stock > 0 && (
-            <span className="button-arrow">→</span>
+            <span className={styles.buttonArrow}>
+              →
+            </span>
           )}
         </button>
       </div>
