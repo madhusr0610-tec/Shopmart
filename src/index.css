@@ -1,5 +1,29 @@
+
 :root {
-    main {
-        min-height: 100vh;
-    }
+  --royal-black: #111214;
+  --royal-surface: #1c1b1a;
+  --royal-gold: #c6a45c;
+  --royal-crimson: #702027;
+  --royal-parchment: #e8dcc2;
+  --royal-border: #514735;
+}
+
+body {
+  margin: 0;
+  background: var(--royal-black);
+  color: var(--royal-parchment);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--royal-gold);
+}
+
+::selection {
+  background: var(--royal-gold);
+  color: var(--royal-black);
 }

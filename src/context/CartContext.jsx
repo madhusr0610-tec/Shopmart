@@ -1,97 +1,153 @@
-import { createContext, 
-     useEffect, useMemo, useState } from "react";
-    
-// Initializing the CartContext using createContext()
+
+import {
+    createContext,
+    useEffect,
+    useMemo,
+    useState,
+    useCallback
+} from "react";
+
 export const CartContext = createContext(null);
 
-// Using browser local storage to store the information,
-// This helps keep the cart data intact even during refreshes
 const STORAGE_KEY = "shopkart_cart";
 
-function loadCart(){
+function loadCart() {
     try {
-        // Trying to retrieve the stored data, or return empty array
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch { // Return empty array as cart in case Error in getting local storage
+    } catch {
         return [];
     }
 }
 
-export function CartProvider({ children }){
-    const [cartItems, setCartItems ] = useState(loadCart);
+export function CartProvider({ children }) {
+    const [cartItems, setCartItems] = useState(loadCart);
+    const [toastMessage, setToastMessage] = useState("");
 
+    // Persist cart items in localStorage
     useEffect(() => {
-        // Whenever cartItems state is updated, overwrite the existing localStorage item for cart
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
-    },[cartItems]);
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(cartItems)
+        );
+    }, [cartItems]);
 
-    function addToCart(product){
+    // Add to Cart
+    const addToCart = useCallback((product) => {
         setCartItems((currentItems) => {
-            // Dealing with the case of item already in cart
-                const existingItem = currentItems.find((item) => item.id == product.id);
+            const existingItem = currentItems.find(
+                (item) => item.id === product.id
+            );
 
-                if (existingItem){
-                    // increase quantity of that item and update cart context
-                    return currentItems.map((item) => item.id === product.id ? {...item, quantity: item.quantity + 1} : item);                
+            if (existingItem) {
+                return currentItems.map((item) =>
+                    item.id === product.id
+                        ? {
+                              ...item,
+                              quantity: item.quantity + 1
+                          }
+                        : item
+                );
+            }
+
+            return [
+                ...currentItems,
+                {
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    thumbnail: product.thumbnail,
+                    quantity: 1
                 }
-
-            // In case the item was not in cart already, I'll return the existing array of items added with the new item
-                return [
-                    ...currentItems,
-                    {
-                        id : product.id,
-                        title: product.title,
-                        price : product.price,
-                        thumbnail : product.thumbnail,
-                        quantity : 1
-                    }
-                ];
+            ];
         });
-    }
+
+        setToastMessage(`${product.title} added to cart!`);
+    }, []);
 
     // Remove from Cart
-    function removeFromCart(productId){
-        setCartItems((currentItems) => currentItems.filter((item) => item.id !== productId));
-    }
+    const removeFromCart = useCallback((productId) => {
+        const product = cartItems.find(
+            (item) => item.id === productId
+        );
+
+        if (!product) return;
+
+        setCartItems((currentItems) =>
+            currentItems.filter(
+                (item) => item.id !== productId
+            )
+        );
+
+        setToastMessage(`${product.title} removed from cart!`);
+    }, [cartItems]);
 
     // Update Cart Quantity
-    function updateQuantity(productId, quantity){
-        if (quantity <= 0){
+    const updateQuantity = useCallback((productId, quantity) => {
+        if (quantity <= 0) {
             removeFromCart(productId);
-            return; // exiting the function
+            return;
         }
 
-        setCartItems((currentItems) => currentItems.map((item) =>  item.id === productId ? {...item, quantity } : item));
-    }
+        setCartItems((currentItems) =>
+            currentItems.map((item) =>
+                item.id === productId
+                    ? { ...item, quantity }
+                    : item
+            )
+        );
+    }, [removeFromCart]);
 
     // Clear Cart
-    function clearCart(){
+    const clearCart = useCallback(() => {
         setCartItems([]);
-    }
+        setToastMessage("Cart cleared successfully!");
+    }, []);
 
-    // cartCount, cartTotal
-    const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-    const cartTotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    // Close Toast
+    const closeToast = useCallback(() => {
+        setToastMessage("");
+    }, []);
 
+    // Cart Count and Total
+    const cartCount = cartItems.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
 
-    // Setup the values for context, use useMemo
-    const value = useMemo( // useMemo is short for 
+    const cartTotal = cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+    );
+
+    // Context Values
+    const value = useMemo(
         () => ({
             cartItems,
             cartCount,
-            cartTotal, 
+            cartTotal,
             addToCart,
             removeFromCart,
             updateQuantity,
-            clearCart
-        }), [cartItems, cartCount, cartTotal]
-    )
+            clearCart,
+            toastMessage,
+            closeToast
+        }),
+        [
+            cartItems,
+            cartCount,
+            cartTotal,
+            addToCart,
+            removeFromCart,
+            updateQuantity,
+            clearCart,
+            toastMessage,
+            closeToast
+        ]
+    );
 
-    // Return the CartContext Provider
     return (
-        <CartContext.Provider value = {value}>
+        <CartContext.Provider value={value}>
             {children}
         </CartContext.Provider>
-        
     );
 }

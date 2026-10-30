@@ -1,0 +1,531 @@
+
+.navbar {
+    --neon: #36ffe0;
+    --neon-dim: rgba(54, 255, 224, 0.28);
+    --text: #d9f5f0;
+    --muted: #779994;
+    --bg: #050d0c;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    color: var(--text);
+    background: rgba(5, 13, 12, 0.96);
+    border-bottom: 1px solid rgba(54, 255, 224, 0.15);
+    backdrop-filter: blur(16px);
+}
+
+.navContainer {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    width: min(1440px, calc(100% - 64px));
+    min-height: 78px;
+    margin: 0 auto;
+}
+
+/* Brand */
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.brandIcon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    color: var(--neon);
+    background: rgba(54, 255, 224, 0.06);
+    border: 1px solid var(--neon);
+    clip-path: polygon(
+        0 0,
+        72% 0,
+        100% 28%,
+        100% 100%,
+        28% 100%,
+        0 72%
+    );
+    filter: drop-shadow(0 0 8px rgba(54, 255, 224, 0.25));
+}
+
+.brandIcon span {
+    font: 800 25px/1 monospace;
+    text-shadow: 0 0 12px rgba(54, 255, 224, 0.6);
+}
+
+.brandText {
+    display: flex;
+    flex-direction: column;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 1px;
+}
+
+.brandText > span {
+    color: var(--neon);
+}
+
+.brandText small {
+    margin-top: 5px;
+    color: var(--muted);
+    font: 8px monospace;
+    letter-spacing: 2px;
+}
+
+/* Navigation layout */
+.navigation {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 22px;
+    min-width: 0;
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.navLink {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0 11px;
+    color: var(--muted);
+    background: transparent;
+    font: 600 10px monospace;
+    letter-spacing: 1px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        color 180ms ease,
+        background 180ms ease;
+}
+
+.navLink::after {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    left: 10px;
+    height: 2px;
+    background: var(--neon);
+    box-shadow: 0 0 9px var(--neon);
+    content: "";
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 180ms ease;
+}
+
+.navLink:hover,
+.navLink.active {
+    color: var(--neon);
+    background: rgba(54, 255, 224, 0.045);
+}
+
+.navLink.active::after {
+    transform: scaleX(1);
+}
+
+.navIndex {
+    color: #466d66;
+    font-size: 9px;
+}
+
+.navLink.active .navIndex,
+.navLink:hover .navIndex {
+    color: var(--neon);
+}
+
+/* Cart indicator */
+.cartLink {
+    gap: 8px;
+}
+
+.cartBadge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 21px;
+    height: 21px;
+    padding: 0 5px;
+    color: #04110f;
+    background: var(--neon);
+    font: 800 10px monospace;
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 75%,
+        75% 100%,
+        0 100%
+    );
+    box-shadow: 0 0 12px rgba(54, 255, 224, 0.3);
+}
+
+/* Search terminal */
+.searchForm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 190px;
+    min-width: 130px;
+    height: 38px;
+    padding: 0 7px 0 11px;
+    background: rgba(54, 255, 224, 0.035);
+    border: 1px solid rgba(54, 255, 224, 0.2);
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.searchForm:focus-within {
+    border-color: var(--neon);
+    box-shadow: 0 0 12px rgba(54, 255, 224, 0.08);
+}
+
+.searchIcon {
+    color: var(--neon);
+    font: 24px/1 monospace;
+}
+
+.searchForm input {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    color: var(--neon);
+    background: transparent;
+    border: 0;
+    outline: none;
+    font: 9px monospace;
+    letter-spacing: 1px;
+}
+
+.searchForm input::placeholder {
+    color: #63817b;
+    opacity: 1;
+}
+
+.searchForm input::-webkit-search-cancel-button {
+    cursor: pointer;
+}
+
+.searchForm button {
+    display: grid;
+    place-items: center;
+    width: 27px;
+    height: 27px;
+    flex-shrink: 0;
+    color: var(--neon);
+    background: rgba(54, 255, 224, 0.07);
+    border: 1px solid rgba(54, 255, 224, 0.2);
+    cursor: pointer;
+    transition: background 180ms ease, color 180ms ease;
+}
+
+.searchForm button:hover {
+    color: var(--bg);
+    background: var(--neon);
+}
+
+/* System indicator */
+.systemStatus {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--neon);
+    font: 600 9px monospace;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.statusDot {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+    transform: rotate(45deg);
+}
+
+/* Bottom light rail */
+.neonRail {
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(54, 255, 224, 0.4) 20%,
+        rgba(54, 255, 224, 0.12) 80%,
+        transparent
+    );
+}
+
+.neonRail span {
+    display: block;
+    width: 15%;
+    height: 1px;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+}
+
+/* Mobile toggle */
+.menuToggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 43px;
+    height: 40px;
+    margin-left: auto;
+    padding: 8px;
+    background: rgba(54, 255, 224, 0.04);
+    border: 1px solid var(--neon-dim);
+    cursor: pointer;
+}
+
+.menuToggle span {
+    width: 20px;
+    height: 2px;
+    background: var(--neon);
+    transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.menuToggleOpen span:first-child {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.menuToggleOpen span:nth-child(2) {
+    opacity: 0;
+}
+
+.menuToggleOpen span:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Medium desktop */
+@media (max-width: 1200px) {
+    .navContainer {
+        width: calc(100% - 36px);
+        gap: 20px;
+    }
+
+    .navigation {
+        gap: 12px;
+    }
+
+    .navLink {
+        gap: 5px;
+        padding: 0 7px;
+        font-size: 9px;
+    }
+
+    .searchForm {
+        width: 155px;
+    }
+}
+
+/* Mobile navigation */
+@media (max-width: 991px) {
+    .navContainer {
+        position: relative;
+        flex-wrap: wrap;
+        min-height: 72px;
+        padding: 12px 0;
+    }
+
+    .menuToggle {
+        display: flex;
+    }
+
+    .navigation {
+        display: none;
+        flex: 0 0 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 18px 0 8px;
+        border-top: 1px solid rgba(54, 255, 224, 0.15);
+    }
+
+    .navigationOpen {
+        display: flex;
+    }
+
+    .navLinks {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        margin-left: 0;
+    }
+
+    .navLink {
+        min-height: 45px;
+        padding: 0 14px;
+        font-size: 11px;
+    }
+
+    .navLink::after {
+        right: auto;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        transform: scaleY(0);
+        transform-origin: bottom;
+    }
+
+    .navLink.active::after {
+        transform: scaleY(1);
+    }
+
+    .cartBadge {
+        margin-left: auto;
+    }
+
+    .searchForm {
+        width: 100%;
+        height: 43px;
+    }
+
+    .systemStatus {
+        padding: 5px 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navLink,
+    .navLink::after,
+    .searchForm,
+    .searchForm button,
+    .menuToggle span {
+        transition: none;
+    }
+}
+
+
+/* ========================================
+   AUTHENTICATION LINKS
+======================================== */
+
+.authActions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.loginLink,
+.registerLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 38px;
+    padding: 0 13px;
+
+    font: 700 10px monospace;
+    letter-spacing: 1px;
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition:
+        color 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.loginLink {
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+.loginLink:hover,
+.loginLink.authActive {
+    color: var(--neon);
+    background: rgba(54, 255, 224, 0.05);
+    border-color: var(--neon-dim);
+}
+
+.registerLink {
+    position: relative;
+    color: #03110f;
+    background: var(--neon);
+    border: 1px solid var(--neon);
+
+    clip-path: polygon(
+        0 0,
+        calc(100% - 10px) 0,
+        100% 10px,
+        100% 100%,
+        0 100%
+    );
+}
+
+.registerLink span {
+    font-size: 15px;
+    transition: transform 180ms ease;
+}
+
+.registerLink:hover {
+    color: var(--neon);
+    background: #0b2521;
+    box-shadow: inset 0 0 12px rgba(54, 255, 224, 0.12);
+}
+
+.registerLink:hover span {
+    transform: translate(2px, -2px);
+}
+
+.loginLink:focus-visible,
+.registerLink:focus-visible {
+    outline: 2px solid var(--neon);
+    outline-offset: 4px;
+}
+
+/* Keep all actions usable on medium screens */
+@media (max-width: 1200px) {
+    .authActions {
+        gap: 5px;
+    }
+
+    .loginLink,
+    .registerLink {
+        padding: 0 9px;
+        font-size: 9px;
+    }
+}
+
+/* Stack auth links in the expanded mobile menu */
+@media (max-width: 991px) {
+    .authActions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+        padding-top: 14px;
+        border-top: 1px solid var(--neon-dim);
+    }
+
+    .loginLink,
+    .registerLink {
+        min-height: 44px;
+        font-size: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .loginLink,
+    .registerLink,
+    .registerLink span {
+        transition: none;
+    }
+}

@@ -1,3 +1,4 @@
+
 import styles from "./ProductCard.module.css";
 import { Link } from "react-router-dom";
 import { useCart } from "../../../cart/hooks/useCart";
@@ -9,139 +10,286 @@ const ProductCard = ({ product }) => {
     description,
     brand,
     price,
-    discountPercentage,
-    stock,
+    discountPercentage = 0,
+    stock = 0,
     thumbnail,
     reviews = [],
   } = product;
+
   const { addToCart } = useCart();
 
   const averageRating =
     reviews.length > 0
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) /
-        reviews.length
+      ? reviews.reduce(
+          (sum, review) => sum + Number(review.rating || 0),
+          0
+        ) / reviews.length
       : 0;
 
-  const roundedRating = averageRating.toFixed(1);
-  const fullStars = Math.floor(averageRating);
-  const hasHalfStar = averageRating - fullStars >= 0.5;
+  const rating = Math.min(5, Math.max(0, averageRating));
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating - fullStars >= 0.5;
+  const wantedLevel = Math.round(rating);
+
+  const stockPercent =
+    stock > 0 ? Math.min(100, (stock / 30) * 100) : 0;
+
+  const stockStatus =
+    stock <= 0
+      ? "DEPLETED"
+      : stock <= 5
+        ? "CRITICAL"
+        : stock <= 15
+          ? "LOW"
+          : "OPTIMAL";
+
+  const stockClass =
+    stock <= 0
+      ? styles.depleted
+      : stock <= 5
+        ? styles.critical
+        : stock <= 15
+          ? styles.lowStock
+          : styles.healthy;
+
+  const originalPrice =
+    discountPercentage > 0 && discountPercentage < 100
+      ? price / (1 - discountPercentage / 100)
+      : null;
 
   return (
-    <div className={styles.productCard}>
+    <article className={styles.productCard}>
+      {/* Compact system header */}
+      <div className={styles.cardHud}>
+        <span>GRID / {String(id).padStart(4, "0")}</span>
+
+        <span className={styles.liveIndicator}>
+          <i />
+          {stock > 0 ? "ONLINE" : "OFFLINE"}
+        </span>
+      </div>
+
+      {/* Product image */}
       <div className={styles.productImageWrapper}>
-        <img
-          src={thumbnail}
-          alt={title}
-          className={styles.productImage}
-        />
+        <Link
+          to={`/products/${id}`}
+          className={styles.imageLink}
+          aria-label={`View ${title}`}
+        >
+          <img
+            src={thumbnail}
+            alt={title}
+            className={styles.productImage}
+            loading="lazy"
+          />
+        </Link>
+
+        <span className={styles.imageCoordinates}>
+          ITEM_{id}
+        </span>
+
+        {discountPercentage > 0 && (
+          <span className={styles.discountBadge}>
+            -{discountPercentage}%
+          </span>
+        )}
       </div>
 
       <div className={styles.productCardBody}>
-        <span className={styles.productBrand}>
-          {brand || "Featured"}
-        </span>
+        {/* Brand and rarity */}
+        <div className={styles.brandRow}>
+          <span className={styles.productBrand}>
+            {brand || "GRID SELECT"}
+          </span>
 
+          <span className={styles.classification}>
+            {wantedLevel >= 4
+              ? "ELITE"
+              : wantedLevel >= 2
+                ? "RARE"
+                : "STANDARD"}
+          </span>
+        </div>
+
+        {/* Fixed title space */}
         <Link
           to={`/products/${id}`}
           className={styles.noDecoration}
         >
-          <h5 className={styles.productTitle}>
+          <h2 className={styles.productTitle} title={title}>
             {title}
-          </h5>
+          </h2>
         </Link>
 
-        <p className={styles.productDescription}>
+        {/* Consistent two-line description */}
+        <p
+          className={styles.productDescription}
+          title={description}
+        >
           {description}
         </p>
 
-        <div className={styles.productRating}>
-          <div className={styles.stars}>
-            {[...Array(5)].map((_, index) => {
-              if (index < fullStars) {
-                return (
-                  <span
-                    key={index}
-                    className={`${styles.star} ${styles.filled}`}
-                  >
-                    ★
-                  </span>
-                );
-              }
-
-              if (index === fullStars && hasHalfStar) {
-                return (
-                  <span
-                    key={index}
-                    className={`${styles.star} ${styles.half}`}
-                  >
-                    ★
-                  </span>
-                );
-              }
-
-              return (
-                <span
-                  key={index}
-                  className={styles.star}
-                >
-                  ★
-                </span>
-              );
-            })}
+        {/* Wanted level / customer rating */}
+        <section
+          className={styles.wantedPanel}
+          aria-label={`Rating ${rating.toFixed(1)} out of 5`}
+        >
+          <div className={styles.panelHeading}>
+            <span>WANTED LEVEL</span>
+            <span className={styles.levelNumber}>
+              LVL {wantedLevel}
+            </span>
           </div>
 
-          <span className={styles.ratingNumber}>
-            {roundedRating}
-          </span>
+          <div className={styles.ratingRow}>
+            <div className={styles.stars} aria-hidden="true">
+              {[...Array(5)].map((_, index) => {
+                const filled = index < fullStars;
+                const half =
+                  !filled &&
+                  index === fullStars &&
+                  hasHalfStar;
 
-          <span className={styles.reviewCount}>
-            ({reviews.length})
-          </span>
+                return (
+                  <span
+                    key={index}
+                    className={[
+                      styles.star,
+                      filled ? styles.filled : "",
+                      half ? styles.half : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    ★
+                  </span>
+                );
+              })}
+            </div>
+
+            <span className={styles.ratingNumber}>
+              {rating.toFixed(1)}
+            </span>
+
+            <span className={styles.reviewCount}>
+              ({reviews.length})
+            </span>
+          </div>
+
+          <div className={styles.levelTrack} aria-hidden="true">
+            {[1, 2, 3, 4, 5].map((level) => (
+              <span
+                key={level}
+                className={
+                  level <= wantedLevel
+                    ? styles.levelActive
+                    : ""
+                }
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Price */}
+        <div className={styles.pricePanel}>
+          <div className={styles.priceInfo}>
+            <span className={styles.priceLabel}>
+              ACQUISITION COST
+            </span>
+
+            <div className={styles.priceRow}>
+              <span className={styles.price}>
+                ${Number(price).toFixed(2)}
+              </span>
+
+              {originalPrice !== null && (
+                <span className={styles.originalPrice}>
+                  ${originalPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {discountPercentage > 0 && (
+            <span className={styles.savingsBadge}>
+              -{discountPercentage}%
+            </span>
+          )}
         </div>
 
-        <div className={styles.productPrice}>
-          <span className={styles.price}>
-            ${price}
-          </span>
-
-          <span className={styles.discount}>
-            -{discountPercentage}%
-          </span>
-        </div>
-
-        <div
-          className={`${styles.productStock} ${
-            stock > 0
-              ? styles.available
-              : styles.unavailable
-          }`}
+        {/* Inventory health */}
+        <section
+          className={`${styles.stockPanel} ${stockClass}`}
+          aria-label={`${stockStatus}: ${stock} units available`}
         >
-          <span className={styles.stockDot}></span>
+          <div className={styles.stockTopRow}>
+            <span className={styles.lifeIcon} aria-hidden="true">
+              {stock <= 0 ? "×" : stock <= 5 ? "!" : "♥"}
+            </span>
 
-          {stock > 0
-            ? `${stock} units available`
-            : "Out of stock"}
-        </div>
+            <div className={styles.stockMeta}>
+              <div className={styles.stockHeading}>
+                <span>LIFE / STOCK</span>
+                <span>{stockStatus}</span>
+              </div>
 
+              <div
+                className={styles.healthTrack}
+                role="meter"
+                aria-label="Inventory level"
+                aria-valuemin={0}
+                aria-valuemax={30}
+                aria-valuenow={Math.min(30, Math.max(0, stock))}
+              >
+                {[...Array(10)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={
+                      index < Math.ceil(stockPercent / 10)
+                        ? styles.healthSegmentActive
+                        : ""
+                    }
+                  />
+                ))}
+              </div>
+
+              <div className={styles.stockCount}>
+                {stock > 0
+                  ? `${stock} UNITS LEFT`
+                  : "OUT OF STOCK"}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Always aligned at the bottom */}
         <button
+          type="button"
           className={styles.productButton}
           disabled={stock <= 0}
-          onClick={() => {
-            addToCart(product);
-          }}
+          onClick={() => addToCart(product)}
         >
-          <span>
-            {stock > 0 ? "Add to Cart" : "Unavailable"}
+          <span className={styles.buttonIcon} aria-hidden="true">
+            {stock > 0 ? "+" : "×"}
+          </span>
+
+          <span className={styles.buttonLabel}>
+            {stock > 0 ? "ACQUIRE ITEM" : "UNAVAILABLE"}
           </span>
 
           {stock > 0 && (
-            <span className={styles.buttonArrow}>
-              →
+            <span className={styles.buttonArrow} aria-hidden="true">
+              ↗
             </span>
           )}
         </button>
+
+        <div className={styles.cardFooter}>
+          <span>SECURE SYSTEM</span>
+          <span>TRON // 02.026</span>
+        </div>
       </div>
-    </div>
+    </article>
   );
 };
 

@@ -1,0 +1,435 @@
+
+.cartitem {
+    --neon: #36ffe0;
+    --neon-soft: rgba(54, 255, 224, 0.15);
+    --surface: #071513;
+    --surface-raised: #0b201e;
+    --muted: #729b96;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-bottom: 22px;
+    padding: 0;
+    color: #e3fffb;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(54, 255, 224, 0.055),
+            transparent 40%
+        ),
+        var(--surface);
+    border: 1px solid rgba(54, 255, 224, 0.35);
+    border-radius: 3px;
+    clip-path: polygon(
+        0 0,
+        calc(100% - 22px) 0,
+        100% 22px,
+        100% 100%,
+        22px 100%,
+        0 calc(100% - 22px)
+    );
+    transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        background 220ms ease;
+}
+
+.cartitem:hover {
+    border-color: var(--neon);
+    box-shadow:
+        0 0 12px rgba(54, 255, 224, 0.12),
+        inset 0 0 22px rgba(54, 255, 224, 0.035);
+}
+
+/* HUD top strip */
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: rgba(54, 255, 224, 0.045);
+    border-bottom: 1px solid rgba(54, 255, 224, 0.18);
+    font: 600 10px/1.4 monospace;
+    letter-spacing: 1.8px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--neon);
+}
+
+.statusDot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+    transform: rotate(45deg);
+}
+
+.itemId {
+    color: var(--muted);
+}
+
+/* Main card layout */
+.content {
+    display: grid;
+    grid-template-columns: minmax(110px, 180px) minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px;
+}
+
+/* Product image frame */
+.visual {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.imageFrame {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 160px;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            90deg,
+            transparent 49.5%,
+            rgba(54, 255, 224, 0.07) 50%,
+            transparent 50.5%
+        ),
+        linear-gradient(
+            transparent 49.5%,
+            rgba(54, 255, 224, 0.07) 50%,
+            transparent 50.5%
+        ),
+        #091b19;
+    background-size: 24px 24px;
+    border: 1px solid rgba(54, 255, 224, 0.23);
+    clip-path: polygon(
+        0 0,
+        calc(100% - 18px) 0,
+        100% 18px,
+        100% 100%,
+        18px 100%,
+        0 calc(100% - 18px)
+    );
+}
+
+.productImage {
+    width: 100%;
+    height: 100%;
+    min-height: 160px;
+    max-height: 220px;
+    padding: 12px;
+    object-fit: contain;
+    filter: saturate(0.85);
+    transition:
+        transform 300ms ease,
+        filter 300ms ease;
+}
+
+.cartitem:hover .productImage {
+    transform: scale(1.06);
+    filter: saturate(1.2) drop-shadow(0 0 8px rgba(54, 255, 224, 0.2));
+}
+
+/* Angular frame accents */
+.cornerTL,
+.cornerBR {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.cornerTL {
+    top: 0;
+    left: 0;
+    border-top: 2px solid var(--neon);
+    border-left: 2px solid var(--neon);
+}
+
+.cornerBR {
+    right: 0;
+    bottom: 0;
+    border-right: 2px solid var(--neon);
+    border-bottom: 2px solid var(--neon);
+}
+
+.visualLabel {
+    color: var(--muted);
+    font: 10px monospace;
+    letter-spacing: 1.5px;
+    text-align: center;
+}
+
+/* Product details */
+.details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.eyebrow,
+.quantityLabel,
+.subtotalLabel,
+.priceLabel {
+    color: var(--muted);
+    font: 10px/1.5 monospace;
+    letter-spacing: 1.5px;
+}
+
+.productTitle {
+    margin: 8px 0 20px;
+    color: #e3fffb;
+    font-size: clamp(17px, 2vw, 23px);
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.priceRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(54, 255, 224, 0.13);
+    border-bottom: 1px solid rgba(54, 255, 224, 0.13);
+}
+
+.price {
+    color: #c6fff6;
+    font: 600 16px monospace;
+}
+
+/* Quantity control: arcade / terminal aesthetic */
+.quantitySection {
+    margin-top: 18px;
+}
+
+.quantityLabel {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.controls {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.controlButton {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 38px;
+    color: var(--neon);
+    background: #0a211e;
+    border: 1px solid rgba(54, 255, 224, 0.4);
+    border-radius: 0;
+    font: 24px/1 monospace;
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.controlButton:hover {
+    color: #03100e;
+    background: var(--neon);
+    box-shadow: 0 0 12px rgba(54, 255, 224, 0.3);
+}
+
+.controlButton:focus-visible,
+.removeButton:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+.quantityDisplay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 66px;
+    padding: 2px 8px;
+    border-bottom: 2px solid var(--neon);
+    background: rgba(54, 255, 224, 0.06);
+}
+
+.quantity {
+    color: var(--neon);
+    font: 700 19px/1.2 monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+.units {
+    margin-top: 3px;
+    color: var(--muted);
+    font: 8px monospace;
+    letter-spacing: 1.5px;
+}
+
+/* Bottom summary row */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 22px;
+}
+
+.subtotalBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.subtotal {
+    color: var(--neon);
+    font: 700 clamp(19px, 2vw, 25px)/1.2 monospace;
+    overflow-wrap: anywhere;
+    text-shadow: 0 0 12px rgba(54, 255, 224, 0.15);
+}
+
+.removeButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    color: #ff7288;
+    background: rgba(255, 75, 105, 0.055);
+    border: 1px solid rgba(255, 75, 105, 0.35);
+    border-radius: 0;
+    font: 600 10px monospace;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        border-color 160ms ease;
+}
+
+.removeButton span {
+    font-size: 18px;
+    line-height: 10px;
+}
+
+.removeButton:hover {
+    color: #fff;
+    background: rgba(255, 75, 105, 0.2);
+    border-color: #ff7288;
+}
+
+/* Segmented neon rail */
+.bottomRail {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 4px;
+    padding: 0 20px;
+}
+
+.bottomRail > span:not(.railLabel) {
+    width: 22px;
+    height: 2px;
+    background: var(--neon);
+    box-shadow: 0 0 6px rgba(54, 255, 224, 0.45);
+}
+
+.bottomRail > span:nth-child(2) {
+    width: 12px;
+    opacity: 0.65;
+}
+
+.bottomRail > span:nth-child(3) {
+    width: 7px;
+    opacity: 0.4;
+}
+
+.bottomRail > span:nth-child(4) {
+    width: 4px;
+    opacity: 0.2;
+}
+
+.bottomRail .railLabel {
+    margin-left: auto;
+    color: #4f7771;
+    font: 8px monospace;
+    letter-spacing: 1.3px;
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .content {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+    }
+
+    .imageFrame {
+        min-height: 120px;
+    }
+
+    .productImage {
+        min-height: 120px;
+        padding: 5px;
+    }
+
+    .topBar {
+        padding: 10px 14px;
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+
+    .productTitle {
+        margin-bottom: 14px;
+    }
+
+    .priceRow {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .controlButton {
+        width: 34px;
+        height: 34px;
+    }
+
+    .quantityDisplay {
+        min-width: 48px;
+    }
+
+    .footer {
+        gap: 12px;
+    }
+
+    .removeButton {
+        padding: 7px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cartitem,
+    .productImage,
+    .controlButton,
+    .removeButton {
+        transition: none;
+    }
+}
